@@ -4,9 +4,6 @@ Project by Aryasatya Wiryawan - 5025221256
 
 DAA (D)
 
-````markdown
-# Meeting Room Booking Optimizer
-
 A Laravel 12 prototype that lets you manage meeting rooms and meeting requests, then uses a **greedy interval-scheduling** algorithm to assign as many non-overlapping meetings to each room as possible.
 
 ---
