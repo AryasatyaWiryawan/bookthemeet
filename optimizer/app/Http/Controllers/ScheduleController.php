@@ -4,45 +4,51 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use App\Models\MeetingRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ScheduleController extends Controller
 {
-    /**
-     * Show the current room assignments.
-     */
-    public function index(): View
+    public function index(Request $request): View
     {
-        // Load rooms and their meetings, ordered by start_time
-        $rooms = Room::with(['meetings' => function($q) {
-            $q->orderBy('start_time');
+        // 1. Grab the date param (default to today)
+        $date = $request->query('date', now()->toDateString());
+
+        // 2. Load only that day’s meetings
+        $rooms = Room::with(['meetings' => function($q) use ($date) {
+            $q->whereDate('start_time', $date)
+              ->orderBy('start_time');
         }])->get();
 
-        return view('schedule', compact('rooms'));
+        return view('schedule', compact('rooms','date'));
     }
 
-    /**
-     * Run the greedy interval-scheduling algorithm.
-     */
-    public function optimize(): RedirectResponse
+    public function optimize(Request $request): RedirectResponse
     {
-        // 1. Detach previous assignments
-        Room::all()->each(fn($r) => $r->meetings()->detach());
+        $date = $request->input('date', now()->toDateString());
 
-        // 2. Fetch all meetings sorted by start_time
-        $meetings = MeetingRequest::orderBy('start_time')->get();
+        // 1. Find which meetings fall on that date
+        $meetingIds = MeetingRequest::whereDate('start_time', $date)
+                                    ->pluck('id');
 
-        // 3. Track availability: room_id => last_end_time
-        $availability = Room::pluck('id')->mapWithKeys(fn($id) => [$id => null])->all();
+        // 2. Detach those only
+        Room::all()->each(fn($r) => $r->meetings()->detach($meetingIds));
+
+        // 3. Fetch and optimize just that day’s meetings
+        $meetings = MeetingRequest::whereDate('start_time', $date)
+                                  ->orderBy('start_time')
+                                  ->get();
 
         // 4. Greedy assign
+        $availability = Room::pluck('id')
+                             ->mapWithKeys(fn($id)=>[$id=>null])
+                             ->all();
+
         foreach ($meetings as $m) {
             foreach ($availability as $roomId => $lastEnd) {
                 if (is_null($lastEnd) || $m->start_time >= $lastEnd) {
-                    // assign meeting to this room
                     $m->rooms()->attach($roomId);
-                    // update that room’s availability
                     $availability[$roomId] = $m->end_time;
                     break;
                 }
@@ -50,7 +56,7 @@ class ScheduleController extends Controller
         }
 
         return redirect()
-            ->route('schedule.index')
-            ->with('status', 'Schedule optimized!');
+            ->route('schedule.index', ['date'=>$date])
+            ->with('status', "Optimized for {$date}");
     }
 }

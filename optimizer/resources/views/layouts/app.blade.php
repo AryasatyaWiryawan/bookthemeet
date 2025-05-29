@@ -14,7 +14,8 @@
           <a class="navbar-brand" href="{{ route('schedule.index') }}">📅 Optimizer</a>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="{{ route('rooms.index') }}">Rooms</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ route('meetings.create') }}">Meetings</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('meetings.index') }}">Meetings</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('schedule.index') }}">Schedule</a></li>
           </ul>
         </div>
       </nav>

@@ -21,3 +21,6 @@ Route::resource('meetings', MeetingRequestController::class)
 Route::resource('rooms', RoomController::class)
      ->except(['show']);
 
+Route::resource('meetings', MeetingRequestController::class)
+     ->except(['show']);
+
