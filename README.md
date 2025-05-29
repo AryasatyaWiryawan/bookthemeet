@@ -34,7 +34,6 @@ A Laravel 12 prototype that lets you manage meeting rooms and meeting requests, 
    ```bash
    git clone https://github.com/AryasatyaWiryawan/bookthemeet.git
    cd bookthemeet
-````
 
 2. **Install PHP dependencies**
 
