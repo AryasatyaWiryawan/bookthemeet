@@ -115,13 +115,5 @@ We implement the **interval-scheduling** greedy algorithm (Lecture #9, Ch. 16):
 ## 📂 Repository
 
 [https://github.com/AryasatyaWiryawan/bookthemeet](https://github.com/AryasatyaWiryawan/bookthemeet)
-
----
-
-## 📜 License
-
-MIT © Your Name
-
-```
 ```
 
