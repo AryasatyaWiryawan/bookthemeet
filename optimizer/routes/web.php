@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScheduleController;  // ← import your controller
 use App\Http\Controllers\MeetingRequestController;
+use App\Http\Controllers\RoomController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,4 +17,7 @@ Route::post('/schedule/optimize', [ScheduleController::class, 'optimize'])
 
 Route::resource('meetings', MeetingRequestController::class)
      ->only(['create','store','destroy']);
+
+Route::resource('rooms', RoomController::class)
+     ->except(['show']);
 
