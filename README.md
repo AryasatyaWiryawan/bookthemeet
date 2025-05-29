@@ -101,7 +101,7 @@ A Laravel 12 prototype that lets you manage meeting rooms and meeting requests, 
 
 ## 🤖 Algorithm
 
-We implement the **interval-scheduling** greedy algorithm (Lecture #9, Ch. 16):
+I implement the **interval-scheduling** greedy algorithm:
 
 1. **Sort** all meeting requests by their **start** time (or finish time).
 2. Keep an array of **room availability**: each room’s last-assigned end time.
@@ -114,5 +114,4 @@ We implement the **interval-scheduling** greedy algorithm (Lecture #9, Ch. 16):
 ## 📂 Repository
 
 [https://github.com/AryasatyaWiryawan/bookthemeet](https://github.com/AryasatyaWiryawan/bookthemeet)
-```
 
