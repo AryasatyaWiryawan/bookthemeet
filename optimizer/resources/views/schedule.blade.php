@@ -20,10 +20,14 @@
 
   {{-- Actions --}}
   <div class="mb-3 d-flex">
-    <form method="POST" action="{{ route('schedule.optimize') }}" class="me-2">
+    <form method="POST" action="{{ route('schedule.optimize') }}">
       @csrf
       <input type="hidden" name="date" value="{{ $date }}">
       <button class="btn btn-success">Optimize for {{ $date }}</button>
+    </form>
+  
+    <form method="GET" action="{{ route('schedule.export', ['date'=>$date]) }}" class="ms-2">
+      <button class="btn btn-outline-secondary">Export CSV</button>
     </form>
   </div>
 

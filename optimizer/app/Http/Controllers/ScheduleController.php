@@ -7,6 +7,7 @@ use App\Models\MeetingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ScheduleController extends Controller
 {
@@ -58,5 +59,46 @@ class ScheduleController extends Controller
         return redirect()
             ->route('schedule.index', ['date'=>$date])
             ->with('status', "Optimized for {$date}");
+    }
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        $date = $request->query('date', now()->toDateString());
+
+        // Load rooms and their meetings for that date
+        $rooms = Room::with(['meetings' => function($q) use ($date) {
+            $q->whereDate('start_time', $date)
+              ->orderBy('start_time');
+        }])->get();
+
+        $filename = "schedule_{$date}.csv";
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function() use ($rooms, $date) {
+            $out = fopen('php://output', 'w');
+            // Header row
+            fputcsv($out, ['Room','Meeting Title','Start Time','End Time']);
+
+            foreach ($rooms as $room) {
+                if ($room->meetings->isEmpty()) {
+                    fputcsv($out, [$room->name,'–','','']);
+                } else {
+                    foreach ($room->meetings as $m) {
+                        fputcsv($out, [
+                            $room->name,
+                            $m->title,
+                            $m->start_time,
+                            $m->end_time,
+                        ]);
+                    }
+                }
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

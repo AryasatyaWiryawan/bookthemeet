@@ -24,3 +24,5 @@ Route::resource('rooms', RoomController::class)
 Route::resource('meetings', MeetingRequestController::class)
      ->except(['show']);
 
+Route::get('/schedule/export', [ScheduleController::class, 'exportCsv'])
+     ->name('schedule.export');
